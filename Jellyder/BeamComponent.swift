@@ -92,7 +92,7 @@ final class BeamComponent: UIView {
     private var wobbleDamping: CGFloat = 4.0
     private var wobbleFrequency: CGFloat = 3.0
     private var velocityToWobbleGain: CGFloat = 0.0004
-    private var lateralWobbleGain: CGFloat = 0.15
+    private var lateralWobbleGain: CGFloat = 0.3
     private var lastAnimationTimestamp: CFTimeInterval = 0
     
     // MARK: - Initialization
@@ -426,7 +426,7 @@ final class BeamComponent: UIView {
         
         if x > beamData.midStart && x < beamData.midEnd {
             let t = (x - beamData.midStart) / beamData.midLength
-            lateral = lateralWobbleGain * wobbleAmplitude * beamData.oscillation * sin(.pi * t)
+            lateral = lateralWobbleGain * wobbleAmplitude * beamData.oscillation * sin(.pi * t) * 1.01
             
             let ys = beamData.amplitude * sin(.pi * t)
             let dysdx = beamData.amplitude * .pi / beamData.midLength * cos(.pi * t)
@@ -606,7 +606,7 @@ final class BeamComponent: UIView {
         
         let velocityBoost = min(0.35, abs(velocity.x) * velocityToWobbleGain)
         wobbleAmplitude = min(1.0, wobbleAmplitude + velocityBoost)
-        wobblePhase += 0.05
+        wobblePhase += 0.07
         
         updateBeamShape()
         delegate?.beamComponent(self, didChangeCompression: compressionRatio)
