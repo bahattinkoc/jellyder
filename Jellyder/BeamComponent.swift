@@ -428,8 +428,9 @@ final class BeamComponent: UIView {
             let t = (x - beamData.midStart) / beamData.midLength
             lateral = lateralWobbleGain * wobbleAmplitude * beamData.oscillation * sin(.pi * t) * 1.01
             
-            let ys = beamData.amplitude * sin(.pi * t)
-            let dysdx = beamData.amplitude * .pi / beamData.midLength * cos(.pi * t)
+            let asymmetryFactor = 1.0 - t * 0.9
+            let ys = beamData.amplitude * sin(.pi * t) * asymmetryFactor
+            let dysdx = beamData.amplitude * .pi / beamData.midLength * cos(.pi * t) * asymmetryFactor
             
             let transitionWidth = max(0.0001, min(transitionSmoothness, beamData.midLength * 0.49))
             
