@@ -236,7 +236,7 @@ final class BeamComponent: UIView {
         let x = cameraRadius * cosf(pitch) * sinf(yaw)
         let y = cameraRadius * sinf(pitch)
         let z = cameraRadius * cosf(pitch) * cosf(yaw)
-        cameraNode.position = SCNVector3(x, y + 8, z)
+        cameraNode.position = SCNVector3(x - 4, y + 8, z)
         
         let lookTarget = SCNNode()
         sceneView.scene?.rootNode.addChildNode(lookTarget)
