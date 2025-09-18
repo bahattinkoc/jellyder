@@ -41,11 +41,14 @@ final class ViewController: UIViewController, BeamComponentDelegate {
 
     private func setupGradientBackground() {
         gradientLayer.colors = [
-            UIColor(red: 0.04, green: 0.05, blue: 0.10, alpha: 1).cgColor,
-            UIColor(red: 0.06, green: 0.08, blue: 0.18, alpha: 1).cgColor,
-            UIColor(red: 0.10, green: 0.08, blue: 0.22, alpha: 1).cgColor
+            UIColor(red: 0.15, green: 0.15, blue: 0.15, alpha: 1).cgColor,
+            UIColor(red: 0.12, green: 0.12, blue: 0.12, alpha: 1).cgColor,
+            UIColor(red: 0.10, green: 0.10, blue: 0.10, alpha: 1).cgColor,
+            UIColor(red: 0.08, green: 0.08, blue: 0.08, alpha: 1).cgColor,
+            UIColor(red: 0.06, green: 0.06, blue: 0.06, alpha: 1).cgColor,
+            UIColor(red: 0.05, green: 0.05, blue: 0.05, alpha: 1).cgColor
         ]
-        gradientLayer.locations = [0.0, 0.55, 1.0]
+        gradientLayer.locations = [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
         gradientLayer.startPoint = CGPoint(x: 0.2, y: 0.0)
         gradientLayer.endPoint   = CGPoint(x: 0.8, y: 1.0)
 
