@@ -89,9 +89,9 @@ final class BeamComponent: UIView {
     private var displayLink: CADisplayLink?
     private var wobblePhase: CGFloat = 0
     private var wobbleAmplitude: CGFloat = 0
-    private var wobbleDamping: CGFloat = 4.0
-    private var wobbleFrequency: CGFloat = 3.0
-    private var velocityToWobbleGain: CGFloat = 0.0004
+    private var wobbleDamping: CGFloat = 2.5
+    private var wobbleFrequency: CGFloat = 2.0
+    private var velocityToWobbleGain: CGFloat = 0.0003
     private var lateralWobbleGain: CGFloat = 0.3
     private var lastAnimationTimestamp: CFTimeInterval = 0
     
@@ -605,9 +605,11 @@ final class BeamComponent: UIView {
         
         currentCompression = newCompression
         
-        let velocityBoost = min(0.35, abs(velocity.x) * velocityToWobbleGain)
+        let compressionRatio = currentCompression / beamTotalLength
+        let normalizedVelocity = abs(velocity.x) * (1.0 - compressionRatio * 0.7)
+        let velocityBoost = min(0.25, normalizedVelocity * velocityToWobbleGain * 0.5)
         wobbleAmplitude = min(1.0, wobbleAmplitude + velocityBoost)
-        wobblePhase += 0.07
+        wobblePhase += 0.04
         
         updateBeamShape()
         delegate?.beamComponent(self, didChangeCompression: compressionRatio)
