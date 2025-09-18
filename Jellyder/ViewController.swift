@@ -16,12 +16,14 @@ final class ViewController: UIViewController, BeamComponentDelegate {
     // MARK: - UI Components
     private var beamComponent: BeamComponent!
     private let gradientLayer = CAGradientLayer()
+    private var valueLabel: UILabel!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         setupUI()
         setupGradientBackground()
         setupBeamComponent()
+        setupValueLabel()
     }
 
     override func viewDidLayoutSubviews() {
@@ -69,8 +71,30 @@ final class ViewController: UIViewController, BeamComponentDelegate {
             beamComponent.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
             beamComponent.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             beamComponent.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            beamComponent.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor)
+            beamComponent.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -80)
         ])
+    }
+
+    /**
+     * Creates and configures the value display label
+     */
+    private func setupValueLabel() {
+        valueLabel = UILabel()
+        valueLabel.text = "100"
+        valueLabel.font = UIFont.systemFont(ofSize: 48, weight: .bold)
+        valueLabel.textColor = .white
+        valueLabel.textAlignment = .center
+        valueLabel.translatesAutoresizingMaskIntoConstraints = false
+        valueLabel.backgroundColor = .clear
+
+        view.addSubview(valueLabel)
+        DispatchQueue.main.async {
+            NSLayoutConstraint.activate([
+                self.valueLabel.centerXAnchor.constraint(equalTo: self.view.centerXAnchor),
+                self.valueLabel.centerYAnchor.constraint(equalTo: self.view.centerYAnchor, constant: 50),
+                self.valueLabel.heightAnchor.constraint(equalToConstant: 100)
+            ])
+        }
     }
 
     // MARK: - BeamComponentDelegate
@@ -87,5 +111,21 @@ final class ViewController: UIViewController, BeamComponentDelegate {
      */
     func beamComponent(_ component: BeamComponent, didChangeWobbleAmplitude amplitude: CGFloat) {
         // You can handle wobble changes here.
+    }
+
+    /**
+     * Called when the slider value changes
+     */
+    func beamComponent(_ component: BeamComponent, didChangeSliderValue value: Int) {
+        valueLabel.text = "\(value)"
+
+        // Add a subtle animation when value changes
+        UIView.animate(withDuration: 0.1, animations: {
+            self.valueLabel.transform = CGAffineTransform(scaleX: 1.1, y: 1.1)
+        }) { _ in
+            UIView.animate(withDuration: 0.1) {
+                self.valueLabel.transform = .identity
+            }
+        }
     }
 }

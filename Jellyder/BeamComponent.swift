@@ -25,6 +25,13 @@ protocol BeamComponentDelegate: AnyObject {
      * @param amplitude The current wobble amplitude (0 to 1)
      */
     func beamComponent(_ component: BeamComponent, didChangeWobbleAmplitude amplitude: CGFloat)
+    
+    /**
+     * Called when the slider value changes
+     * @param component The beam component
+     * @param value The current slider value (0 to 100)
+     */
+    func beamComponent(_ component: BeamComponent, didChangeSliderValue value: Int)
 }
 
 /**
@@ -46,6 +53,14 @@ final class BeamComponent: UIView {
     var compressionRatio: CGFloat {
         get { currentCompression / beamTotalLength }
         set { setCompression(newValue * beamTotalLength) }
+    }
+    
+    /**
+     * Current slider value (0 = leftmost position, 100 = rightmost position)
+     */
+    var sliderValue: Int {
+        get { Int((1.0 - compressionRatio) * 100) }
+        set { compressionRatio = 1.0 - CGFloat(newValue) / 100.0 }
     }
 
     /**
@@ -124,6 +139,7 @@ final class BeamComponent: UIView {
         currentCompression = clampedCompression
         updateBeamShape()
         delegate?.beamComponent(self, didChangeCompression: compressionRatio)
+        delegate?.beamComponent(self, didChangeSliderValue: sliderValue)
     }
 
     /**
@@ -656,6 +672,7 @@ final class BeamComponent: UIView {
         updateBeamShape()
         delegate?.beamComponent(self, didChangeCompression: compressionRatio)
         delegate?.beamComponent(self, didChangeWobbleAmplitude: wobbleAmplitude)
+        delegate?.beamComponent(self, didChangeSliderValue: sliderValue)
     }
 
     // MARK: - Animation Loop
