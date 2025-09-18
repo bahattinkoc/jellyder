@@ -94,6 +94,7 @@ final class BeamComponent: UIView {
     private var velocityToWobbleGain: CGFloat = 0.0003
     private var lateralWobbleGain: CGFloat = 0.3
     private var lastAnimationTimestamp: CFTimeInterval = 0
+    private var roundEnds: Bool = true
     
     // MARK: - Initialization
     
@@ -398,11 +399,14 @@ final class BeamComponent: UIView {
             )
             
             let (cosTheta, sinTheta) = calculateRotation(dydx: dydx)
+            let endScale = roundEnds ? calculateEndScale(x: x, beamData: beamData) : 1
             
             for point in crossSection {
-                let worldX = x + lateral + (-sinTheta) * point.x
-                let worldY = y + cosTheta * point.x
-                let worldZ = point.y
+                let scaledX = point.x * endScale
+                let scaledY = point.y * endScale
+                let worldX = x + lateral + (-sinTheta) * scaledX
+                let worldY = y + cosTheta * scaledX
+                let worldZ = scaledY
                 positions.append(SCNVector3(Float(worldX), Float(worldY), Float(worldZ)))
                 
                 let color = calculateVertexColor(t: Float(t))
@@ -417,6 +421,17 @@ final class BeamComponent: UIView {
         positions.append(lastCenter)
         
         return (positions, colors)
+    }
+
+    private func calculateEndScale(x: CGFloat, beamData: BeamParameters) -> CGFloat {
+        let radius = max(beamData.halfThicknessY, beamData.halfThicknessZ)
+        let distanceToStart = x - beamData.startX
+        let distanceToEnd = beamData.endX - x
+        let nearest = min(distanceToStart, distanceToEnd)
+        if nearest >= radius { return 1 }
+        if nearest <= 0 { return 0 }
+        let u = nearest / radius
+        return sqrt(max(0, 2 * u - u * u))
     }
     
     private func calculateBeamDeflection(x: CGFloat, beamData: BeamParameters) -> (y: CGFloat, dydx: CGFloat, lateral: CGFloat) {
@@ -619,8 +634,8 @@ final class BeamComponent: UIView {
     // MARK: - Animation Loop
     
     @objc private func updateAnimation(_ displayLink: CADisplayLink) {
-        if lastAnimationTimestamp == 0 { 
-            lastAnimationTimestamp = displayLink.timestamp 
+        if lastAnimationTimestamp == 0 {
+            lastAnimationTimestamp = displayLink.timestamp
         }
         
         let deltaTime = CGFloat(displayLink.timestamp - lastAnimationTimestamp)
